@@ -101,9 +101,14 @@ $ curl http://localhost/health
 ## Part 3: Cloud Deployment
 
 ### Exercise 3.1 / 3.2: Deploy Agent Part 6 lên Cloud
-- **Platform:** *(Điền Railway hoặc Render sau khi deploy)*
-- **Public URL:** *(Điền URL sau khi deploy)*
+- **Platform:** Render (Docker Web Service, Root Directory `06-lab-complete` + Render Key Value Redis)
+- **Public URL:** https://quanhda.onrender.com
 - **Screenshots:** `screenshots/dashboard.png`, `screenshots/running.png`, `screenshots/test.png`
+- **Kết quả kiểm tra nhanh:**
+  - `GET /health` → `HTTP 200` (`{"status":"ok","environment":"production",...}`)
+  - `GET /ready` → `HTTP 200` (`{"status":"ready","redis":"connected"}`)
+  - `POST /ask` (không có `X-API-Key`) → `HTTP 401`
+  - `POST /ask` (có `X-API-Key`) → `HTTP 200` (chi tiết xem [DEPLOYMENT.md](DEPLOYMENT.md) và `screenshots/test.png`)
 
 **So sánh `railway.toml` vs `render.yaml`:**
 - **`railway.toml`** (định dạng TOML): cấu hình gọn cho từng service đơn lẻ (`[build]` chỉ định `builder = "DOCKERFILE"`, `[deploy]` chỉ định `healthcheckPath = "/health"`, `restartPolicyType`). Các biến môi trường và Redis thường được thêm qua Railway Dashboard hoặc CLI (`railway variables set`).
@@ -218,4 +223,9 @@ Kết quả chạy `python3 check_production_ready.py` (đầy đủ, có Docker
 
 ## AI Usage Log
 
-*(Ghi lại quá trình sử dụng AI hỗ trợ trong bài lab)*
+| Mục / Bước | Công cụ AI sử dụng | Nội dung hỗ trợ | Kiểm chứng bởi học viên |
+| :--- | :--- | :--- | :--- |
+| Part 1–5 (Setup, Docker, Auth, Scaling) | Antigravity AI Assistant | Hướng dẫn từng bước trên WSL2, sửa lỗi quyền Docker socket, tổng hợp câu trả lời vào `MISSION_ANSWERS.md`. | Tự chạy toàn bộ lệnh `curl`, `docker build`, `docker compose`, `test_stateless.py` và đối chiếu kết quả thực tế. |
+| Part 6 (`06-lab-complete/`) | Antigravity AI Assistant | Triển khai các `TODO` (config, auth, Redis rate limiter, cost guard, JSON logging, graceful shutdown, multi-stage Dockerfile, compose, deploy config). | Chạy `python3 check_production_ready.py` đạt `PASS 12/12` (43/43 checks). |
+| Part 3 (Render Deployment) | Antigravity AI Assistant | Hướng dẫn cấu hình Render Web Service + Redis, kiểm tra endpoint public và viết `DEPLOYMENT.md`. | Tự tạo service & secret trên Render, kiểm tra live URL `https://quanhda.onrender.com`. |
+| Part 7 (Benchmark & Observability) | Antigravity AI Assistant | Chạy load test, eval v1/v2, sửa `KNOWLEDGE_BASE` đạt 100%, sửa lỗi `Dockerfile` mẫu ở `benchmark-observability/production/`, chạy Locust scaling + alerts và điền `BENCHMARK_REPORT.md`. | Đối chiếu số liệu trong `BENCHMARK_REPORT.md` khớp 100% với file JSON/CSV trong `reports/`, `benchmark-results/` và 4 ảnh trong `screenshots/`. |
